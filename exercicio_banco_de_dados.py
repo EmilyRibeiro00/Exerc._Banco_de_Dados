@@ -90,5 +90,30 @@ cursor.execute('DELETE FROM clientes where id=7')
 #id da tabela "clientes"), produto (texto) e valor (real). Insira algumas compras associadas a clientes existentes na tabela "clientes".Escreva 
 #uma consulta para exibir o nome do cliente, o produto e o valor de cada compra.
 
+cursor.execute('CREATE TABLE compras (id INT PRIMARY KEY,cliente_id INT,produto VARCHAR(100),valor REAL,FOREIGN KEY (cliente_id) REFERENCES clientes(id))')
+
+# Inserindo algumas compras associadas a clientes existentes na tabela "clientes"
+compras = [
+    (1, 1, "Smartphone", 1500.00),
+    (2, 2, "Tablet", 800.00),
+    (3, 3, "Livro", 30.00),
+    (4, 4, "Fones de ouvido", 100.00),
+    (5, 5, "Monitor", 300.00)
+]
+
+for compra in compras:
+    cursor.execute('INSERT INTO compras (id, cliente_id, produto, valor) VALUES (?, ?, ?, ?)', compra)
+
+# Escrevendo e imprimindo uma consulta para exibir o nome do cliente, o produto e o valor de cada compra
+cursor.execute('''SELECT c.nome AS nome_cliente, co.produto, co.valor
+                  FROM clientes c
+                  JOIN compras co ON c.id = co.cliente_id''')
+
+dados = cursor.fetchall()
+
+print("Nome do Cliente | Produto | Valor")
+for dado in dados:
+    print(f"{dado[0]} | {dado[1]} | R${dado[2]:.2f}")
+
 conexao.commit()
 conexao.close
